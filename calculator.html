@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Calculator</title>
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif; /* Futuristic font */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e); /* Dark space-like gradient */
+            color: #ffffff;
+        }
+
+        .calculator {
+            width: 320px;
+            background: linear-gradient(145deg, #1e1e2f, #2a2a3e); /* Sleek dark gradient */
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1); /* Neon glow */
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculator::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 4s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        #display {
+            width: 90%;
+            height: 60px;
+            font-size: 24px;
+            text-align: right;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ffff; /* Cyan text */
+            box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.5);
+            outline: none;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #3a3a5c, #4a4a6c);
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 255, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        button.operator {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+
+        button.equal {
+            background: linear-gradient(145deg, #00d4ff, #0099cc);
+            color: white;
+            grid-column: span 2;
+        }
+
+        button.clear {
+            background: linear-gradient(145deg, #ff4757, #ff3838);
+            color: white;
+            grid-column: span 2;
+        }
+
+        /* Responsive design */
+        @media (max-width: 400px) {
+            .calculator {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" id="display" readonly>
+        <div class="buttons">
+            <button data-val="7">7</button>
+            <button data-val="8">8</button>
+            <button data-val="9">9</button>
+            <button class="operator" data-val="/">/</button>
+            <button data-val="4">4</button>
+            <button data-val="5">5</button>
+            <button data-val="6">6</button>
+            <button class="operator" data-val="*">*</button>
+            <button data-val="1">1</button>
+            <button data-val="2">2</button>
+            <button data-val="3">3</button>
+            <button class="operator" data-val="-">-</button>
+            <button data-val="0">0</button>
+            <button data-val=".">.</button>
+            <button class="operator" data-val="+">+</button>
+            <button class="equal" id="equal">=</button>
+            <button class="clear" id="clear">Clear</button>
+        </div>
+    </div>
+    <script>
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('button');
+
+        // Function to append value to display
+        function appendValue(value) {
+            display.value += value;
+        }
+
+        // Function to calculate result
+        function calculate() {
+            try {
+                display.value = eval(display.value);
+            } catch {
+                display.value = "Error";
+            }
+        }
+
+        // Function to clear display
+        function clearDisplay() {
+            display.value = "0";
+        }
+
+        // Button click handlers
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const value = btn.dataset.val;
+                if (value) {
+                    appendValue(value);
+                } else if (btn.id === 'equal') {
+                    calculate();
+                } else if (btn.id === 'clear') {
+                    clearDisplay();
+                }
+            });
+        });
+
+        // Keyboard input handler
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+            if (key >= '0' && key <= '9') {
+                appendValue(key);
+            } else if (key === '.') {
+                appendValue('.');
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                appendValue(key);
+            } else if (key === 'Enter') {
+                event.preventDefault(); // Prevent form submission if any
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            }
+        });
+    </script>
+</body>
+</html>
